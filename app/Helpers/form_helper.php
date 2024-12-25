@@ -215,7 +215,7 @@ if (!function_exists('btn_auth')) {
         string $title = '',
     ) {
         return '
-        <button style="background-color:#7fad39;" type="submit" class="btn-auth btn rounded-0 col-12 mt-3"><strong class="text-white">' . $title . '</strong></button>
+        <button style="background-color:var(--primary);" type="submit" class="btn-auth btn rounded-0 col-12 mt-3"><strong class="text-white">' . $title . '</strong></button>
         ';
     }
 }
