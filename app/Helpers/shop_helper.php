@@ -41,8 +41,8 @@ if (!function_exists('search')) {
         <form class="input-group flex-nowrap" method="GET" action="' . esc(base_url($url)) . '">
             <input type="search" class="form-control form-control-sm" name="search" id="search" placeholder="Cari..." value="' . (isset($_GET['search']) ? esc($_GET['search']) : '') . '">
             <div class="input-group-prepend">
-                <button type="submit" class="btn btn-light rounded-0 border-0 text-success btn-sm">
-                    <i class="fa fa-search"></i>
+                <button type="submit" class="btn rounded-0 border-0 text-success btn-sm">
+                    <i class="mdi mdi-magnify"></i>
                 </button>
             </div>
         </form>
