@@ -57,6 +57,7 @@ class AdminProductController extends BaseController
 
     public function store()
     {
+        // dd($this->request);
         $this->validation->setRules([
             'title'         => 'required|max_length[255]|is_unique[products.name]',
             'slug'          => 'required|max_length[255]|is_unique[products.slug]',
@@ -64,18 +65,37 @@ class AdminProductController extends BaseController
             'price'         => 'required|numeric',
             'stocks'        => 'required|numeric',
             'description'   => 'required|min_length[10]',
-            'image'         => 'permit_empty|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png]|max_size[image,2048]',
+            'images'        => 'permit_empty|max_count[4]',
+            'images.*'      => 'uploaded[images]|is_image[images]|mime_in[images,image/jpg,image/jpeg,image/png]|max_size[images,2048]',
         ]);
 
         if (!$this->validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
 
-        $imageName = null;
-        $image = $this->request->getFile('image');
-        if ($image && $image->isValid()) {
-            $imageName = $image->getRandomName();
-            $image->move('storage/products', $imageName);
+        $files = $this->request->getFiles('images');
+        $imagesArray = $files['images'] ?? [];
+        if (count($imagesArray) > 5) {
+            $this->validation->setError('images', 'Jumlah gambar yang diupload tidak boleh lebih dari 5.');
+            return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
+        }
+
+        // $imageName = null;
+        // $image = $this->request->getFile('image');
+        // if ($image && $image->isValid()) {
+        //     $imageName = $image->getRandomName();
+        //     $image->move('storage/products', $imageName);
+        // }
+        $uploadedImages = [];
+        if ($files) {
+            foreach ($files['images'] as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    // $imageName = $file->getRandomName();
+                    $imageName = substr(bin2hex(random_bytes(4)), 0, 10) . '.' . $file->getClientExtension();
+                    $file->move('storage/products', $imageName);
+                    $uploadedImages[] = $imageName;
+                }
+            }
         }
 
         $product = [
@@ -85,7 +105,7 @@ class AdminProductController extends BaseController
             'description'   => $this->request->getPost('description'),
             'price'         => $this->request->getPost('price'),
             'stocks'        => $this->request->getPost('stocks'),
-            'image'         => $imageName
+            'image'         => json_encode($uploadedImages)
         ];
 
         if ($this->product->save($product)) {
@@ -93,7 +113,7 @@ class AdminProductController extends BaseController
             return redirect()->to(route_to('product_index'));
         } else {
             session()->setFlashdata('error', 'Kategori gagal disimpan');
-            return redirect()->to(route_to('product_create'));  
+            return redirect()->to(route_to('product_create'));
         }
     }
 
@@ -114,31 +134,49 @@ class AdminProductController extends BaseController
     public function update(string $slug)
     {
         $product = $this->product->where('slug', $slug)->first();
-
+        if (!$product) {
+            session()->setFlashdata('error', 'Produk tidak ditemukan');
+            return redirect()->to(route_to('product_index'));
+        }
         $this->validation->setRules([
-            'title'         => 'required|min_length[3]|max_length[255]|is_unique[products.name,id,' . $product['id'] . ']',
-            'slug'          => 'required|min_length[3]|max_length[255]|is_unique[products.slug,id,' . $product['id'] . ']',
-            'category_id'   => 'required',
-            'price'         => 'required|numeric',
-            'stocks'        => 'required|numeric',
-            'description'   => 'required|min_length[10]',
-            'image'         => 'permit_empty|is_image[image]|mime_in[image,image/jpg,image/jpeg,image/png]|max_size[image,2048]',
+            'title'             => 'required|min_length[3]|max_length[255]|is_unique[products.name,id,' . $product['id'] . ']',
+            'slug'              => 'required|min_length[3]|max_length[255]|is_unique[products.slug,id,' . $product['id'] . ']',
+            'category_id'       => 'required',
+            'price'             => 'required|numeric',
+            'stocks'            => 'required|numeric',
+            'description'       => 'required|min_length[10]',
+            'images'            => 'permit_empty|max_count[4]',
+            'images.*'          => 'is_image[images]|mime_in[images,image/jpg,image/jpeg,image/png]|max_size[images,2048]',
         ]);
-
         if (!$this->validation->withRequest($this->request)->run()) {
             return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
 
-        $imageName = $product['image'] ?? null;
-
-        $image = $this->request->getFile('image');
-        if ($image && $image->isValid() && !$image->hasMoved()) {
-            if (!empty($product['image']) && file_exists('storage/products/' . $product['image'])) {
-                unlink('storage/products/' . $product['image']);
-            }
-            $imageName = $image->getRandomName();
-            $image->move('storage/products', $imageName);
+        $files = $this->request->getFiles('images');
+        $imagesArray = $files['images'] ?? [];
+        if (count($imagesArray) > 5) {
+            $this->validation->setError('images', 'Jumlah gambar yang diupload tidak boleh lebih dari 5.');
+            return redirect()->back()->withInput()->with('errors', $this->validation->getErrors());
         }
+        $existingImages = json_decode($product['image'], true) ?? [];
+        $uploadedImages = [];
+
+        if ($files) {
+            foreach ($files['images'] as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    foreach ($existingImages as $existingImage) {
+                        $imagePath = 'storage/products/' . $existingImage;
+                        if (file_exists($imagePath)) {
+                            unlink($imagePath);
+                        }
+                    }
+                    $imageName = substr(bin2hex(random_bytes(4)), 0, 10) . '.' . $file->getClientExtension();
+                    $file->move('storage/products', $imageName);
+                    $uploadedImages[] = $imageName;
+                }
+            }
+        }
+        $images = !empty($uploadedImages) ? json_encode($uploadedImages) : ($existingImages ? json_encode($existingImages) : null);
         $updateProduct = [
             'id'            => $product['id'],
             'name'          => $this->request->getPost('title'),
@@ -147,16 +185,18 @@ class AdminProductController extends BaseController
             'description'   => $this->request->getPost('description'),
             'price'         => $this->request->getPost('price'),
             'stocks'        => $this->request->getPost('stocks'),
-            'image'         => $imageName
+            'image'         => $images
         ];
         if ($this->product->save($updateProduct)) {
             session()->setFlashdata('success', 'Produk berhasil diubah!');
-            return redirect()->to(route_to('product_index'));  // Redirect ke halaman produk
+            return redirect()->to(route_to('product_index'));
         } else {
             session()->setFlashdata('error', 'Produk gagal diubah');
-            return redirect()->to(route_to('product_edit', $slug));  // Redirect ke halaman edit produk
+            return redirect()->to(route_to('product_edit', $slug));
         }
     }
+
+
 
     public function destroy(string $slug)
     {
@@ -164,8 +204,14 @@ class AdminProductController extends BaseController
         if (!$product) {
             return redirect()->back()->with('error', 'Produk tidak ditemukan');
         }
+        $existingImages = json_decode($product['image'], true) ?? [];
         if ($this->product->delete($product['id'])) {
-            // Hapus gambar produk jika ada
+            foreach ($existingImages as $existingImage) {
+                $imagePath = 'storage/products/' . $existingImage;
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }
             if (!empty($product['image']) && file_exists('storage/products/' . $product['image'])) {
                 unlink('storage/products/' . $product['image']);
             }

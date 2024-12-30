@@ -18,7 +18,7 @@
                     type: 'text',
                     ph: 'Masukkan nama produk',
                     title: 'Nama Produk',
-                    attributes: ['required' => 'required', 'onkeyup' => 'createSlug()']
+                    attributes: ['', 'onkeyup' => 'createSlug()']
                 ) ?>
 
                 <?= form_input(
@@ -28,7 +28,7 @@
                     type: 'text',
                     ph: 'Slug',
                     title: 'Slug',
-                    attributes: ['required' => 'required']
+                    attributes: ['']
                 ) ?>
 
                 <?= form_select(
@@ -46,7 +46,7 @@
                     type: 'number',
                     ph: 'Masukkan harga produk',
                     title: 'Harga Produk',
-                    attributes: ['required' => 'required']
+                    attributes: ['']
                 ) ?>
 
                 <?= form_input(
@@ -56,7 +56,7 @@
                     type: 'number',
                     ph: 'Masukkan Stok produk',
                     title: 'Stok Produk',
-                    attributes: ['required' => 'required']
+                    attributes: ['']
                 ) ?>
 
                 <?= form_text(
@@ -65,16 +65,20 @@
                     errors: session('errors.description') ?? '',
                     ph: 'Tulis deskripsi produk...',
                     title: 'Deskripsi Produk',
-                    attributes: ['required' => 'required']
+                    attributes: ['']
                 ) ?>
 
                 <?= form_input(
-                    name: 'image',
-                    errors: session('errors.image') ?? '',
+                    name: 'images[]',
+                    errors: session('errors.images') ?? '',
                     type: 'file',
                     title: 'Upload Gambar Produk',
-                    attributes: ['accept' => 'image/*']
+                    attributes: [
+                        'accept' => 'image/*',
+                        'multiple' => true
+                    ]
                 ) ?>
+                <div class="image-preview" id="image-preview"></div>
                 <?= btn_submit(route_to('product_index')) ?>
                 <?= form_close() ?>
             </div>

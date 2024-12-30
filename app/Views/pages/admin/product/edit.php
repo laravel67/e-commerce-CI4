@@ -69,12 +69,29 @@
                 ) ?>
 
                 <?= form_input(
-                    name: 'image',
-                    errors: session('errors.image') ?? '',
+                    name: 'images[]',
+                    errors: session('errors.images') ?? '',
                     type: 'file',
                     title: 'Upload Gambar Produk',
-                    attributes: ['accept' => 'image/*']
+                    attributes: [
+                        'accept' => 'image/*',
+                        'multiple' => true
+                    ]
                 ) ?>
+                <?php
+                $images = json_decode($product['image'], true);
+                ?>
+
+                <?php if (!empty($images)): ?>
+                    <div class="image-preview" id="image-preview">
+                        <?php foreach ($images as $image): ?>
+                            <img src="<?= base_url('storage/products/' . esc($image)) ?>" alt="Gambar Produk" class="img-thumbnail" width="150">
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="image-preview" id="image-preview"></div>
+                <?php endif; ?>
+
 
                 <?= btn_submit(route_to('product_index')) ?>
                 <?= form_close() ?>

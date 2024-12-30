@@ -29,3 +29,27 @@ function logout() {
         console.error('Logout form not found.');
     }
 }
+
+
+document.getElementById('image').addEventListener('change', function (event) {
+    const previewContainer = document.getElementById('image-preview');
+    previewContainer.innerHTML = ''; // Reset container preview
+
+    const files = event.target.files;
+
+    Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.maxWidth = '100px'; // Atur gaya gambar
+                img.style.margin = '5px';
+                previewContainer.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+});

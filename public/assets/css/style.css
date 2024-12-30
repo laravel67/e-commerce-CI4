@@ -1,6 +1,8 @@
 /*-------------------------------------------------------------------
   ===== Table of Contents =====
 
+  
+
   * Bootstrap functions
   * Template variables
   * SCSS Compass Functions
@@ -106,6 +108,21 @@
 /* === Import template variables === */
 /*-------------------------------------------------------------------*/
 /* === SCSS Compass Functions === */
+
+.image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.image-preview img {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
 @-moz-keyframes flash {
   0% {
     opacity: 1; }

@@ -15,11 +15,15 @@
 <div class="row featured__filter">
     <?php if ($products && count($products) > 0): ?>
         <?php foreach ($products as $product): ?>
+            <?php
+            $images = json_decode($product['image'], true);
+            $firstImage = !empty($images) ? $images[0] : null;
+            ?>
             <?= card_product(
                 idProduct: $product['id'],
                 name: $product['name'],
                 price: $product['price'],
-                img: $product['image'],
+                img: $firstImage,
                 category: $product['category_name'],
                 count: $product['stocks'],
                 urlShow: base_url("product/" . $product['slug']),

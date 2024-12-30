@@ -28,14 +28,20 @@
 
                             <td>
                                 <p>
-                                    <?php if (!empty($product['image'])) : ?>
-                                        <a href="<?= base_url('storage/products/' . $product['image']) ?>" data-lightbox="product-gallery" data-title="<?= esc($product['name']) ?>">
-                                            <img src="<?= base_url('storage/products/' . $product['image']) ?>" alt="<?= esc($product['name']) ?>" width="50" height="50">
+                                    <?php
+                                    $images = json_decode($product['image'], true); // Decode JSON menjadi array
+                                    $firstImage = !empty($images) ? $images[0] : null; // Ambil gambar pertama jika ada
+                                    ?>
+
+                                    <?php if (!empty($firstImage)) : ?>
+                                        <a href="<?= base_url('storage/products/' . $firstImage) ?>" data-lightbox="product-gallery" data-title="<?= esc($product['name']) ?>">
+                                            <img src="<?= base_url('storage/products/' . $firstImage) ?>" alt="<?= esc($product['name']) ?>" width="50" height="50">
                                         </a>
                                     <?php else : ?>
                                         <img src="https://placehold.co/50x50" alt="No Image">
                                     <?php endif; ?>
-                                    <strong><?= esc($product['name']) ?></strong>
+                                    <strong>
+                                        <?= esc($product['name']) ?></strong>
                                 </p>
                             </td>
                             <td><?= esc($product['category']) ?></td>
@@ -69,6 +75,5 @@
         </table>
     </div>
     <?= $pager->links() ?>
-
 </div>
 <?= $this->endSection(); ?>

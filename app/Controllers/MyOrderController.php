@@ -32,7 +32,7 @@ class MyOrderController extends BaseController
             'title' => 'Daftar Pesanan',
             'orders'  => $orders
         ];
-        return view('/pages/order/index', $data);
+        return view('/pages/cart/orders', $data);
     }
 
     public function detail(string $inv)
@@ -55,6 +55,6 @@ class MyOrderController extends BaseController
             'details' => $details,
         ];
 
-        return view('/pages/order/detail', $data);
+        return view('/pages/cart/order_detail', $data);
     }
 }

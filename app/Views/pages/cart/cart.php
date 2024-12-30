@@ -1,7 +1,5 @@
 <?= $this->extend('layouts/app'); ?>
 <?= $this->section('content'); ?>
-
-
 <?php if ($carts && count($carts) > 0): ?>
     <div class="row">
         <div class="col-lg-12">
@@ -19,10 +17,15 @@
                     </thead>
                     <tbody>
                         <?php foreach ($carts as $index => $cart): ?>
+                            <?php
+                            // Jika product_image berisi beberapa gambar dalam format JSON
+                            $images = json_decode($cart->product_image, true);
+                            $firstImage = !empty($images) ? $images[0] : null;
+                            ?>
                             <tr>
                                 <td class="shoping__cart__item">
-                                    <?php if ($cart->product_image): ?>
-                                        <img src="<?= base_url('storage/products/' . $cart->product_image) ?>" alt="<?= $cart->product_image ?>" width="50">
+                                    <?php if ($firstImage): ?>
+                                        <img src="<?= base_url('storage/products/' . esc($firstImage)) ?>" alt="<?= esc($cart->product_name) ?>" width="50">
                                     <?php else: ?>
                                         <img src="https://placehold.co/50x50" alt="No Image">
                                     <?php endif; ?>
@@ -36,7 +39,7 @@
                                     <?= csrf_field() ?>
                                     <input type="hidden" value="<?= $cart->id ?>" name="productId">
                                     <div class="pro-qty">
-                                        <input type="text" name="quantity" id="quantity" value="<?= $cart->quantity ?>">
+                                        <input type="text" name="quantity" id="quantity" value="<?= esc($cart->quantity) ?>">
                                     </div>
                                     <button type="submit" class="btn btn-sm text-success"><i class="fa fa-check"></i></button>
                                     <?= form_close() ?>
@@ -50,7 +53,6 @@
                                         'Produk',
                                         esc($cart->product_name)
                                     ) ?>
-
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -92,7 +94,7 @@
     </div>
 <?php else: ?>
     <div class="text-center">
-        <img src="<?= base_url('img/reshot-icon-cart-BAE3K9JRS7.svg') ?>" width="400">
+        <img src="<?= base_url('img/shopping-cart-21.svg') ?>" width="400">
         <br>
         <a href="<?= base_url('/') ?>" class="primary-btn">Belanja Sekarang</a>
     </div>

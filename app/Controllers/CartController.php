@@ -42,7 +42,7 @@ class CartController extends BaseController
             'total' => $total,
         ];
 
-        return view('pages/cart/index', $data);
+        return view('pages/cart/cart', $data);
     }
 
     public function addcart(int $id)

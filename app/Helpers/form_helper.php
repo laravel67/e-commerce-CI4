@@ -27,12 +27,13 @@ if (!function_exists('form_input')) {
             $attrString .= $key . '="' . htmlspecialchars($val, ENT_QUOTES) . '" ';
         }
         $errorClass = $errors ? 'is-invalid' : '';
+        $idInput = $type === 'file' ? 'image' : $name;
         return '
             <div class="form-group">
                 <label for="' . htmlspecialchars($name, ENT_QUOTES) . '">' . htmlspecialchars($title, ENT_QUOTES) . '</label>
                 <input type="' . htmlspecialchars($type, ENT_QUOTES) . '" 
                        class="form-control rounded-0 ' . $errorClass . '" 
-                       id="' . htmlspecialchars($name, ENT_QUOTES) . '" 
+                       id="' . htmlspecialchars($idInput, ENT_QUOTES) . '" 
                        name="' . htmlspecialchars($name, ENT_QUOTES) . '" 
                        placeholder="' . htmlspecialchars($ph, ENT_QUOTES) . '" 
                        value="' . htmlspecialchars(old($name, $value), ENT_QUOTES) . '" 

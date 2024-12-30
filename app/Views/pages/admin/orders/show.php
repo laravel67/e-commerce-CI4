@@ -34,15 +34,21 @@
                     <tr>
                         <td>
                             <p>
-                                <?php if (!empty($detail['product_image'])) : ?>
-                                    <a href="<?= base_url('storage/products/' . esc($detail['product_image'])) ?>" data-lightbox="product-gallery" data-title="<?= esc($detail['product_name']) ?>">
-                                        <img src="<?= base_url('storage/products/' . esc($detail['product_image'])) ?>" alt="<?= esc($detail['product_name']) ?>" width="100" height="100">
+                                <?php
+                                // Jika product_image berisi beberapa gambar dalam format JSON
+                                $images = json_decode($detail['product_image'], true);
+                                $firstImage = !empty($images) ? $images[0] : null;
+                                ?>
+                                <?php if ($firstImage): ?>
+                                    <a href="<?= base_url('storage/products/' . esc($firstImage)) ?>" data-lightbox="product-gallery" data-title="<?= esc($detail['product_name']) ?>">
+                                        <img src="<?= base_url('storage/products/' . esc($firstImage)) ?>" alt="<?= esc($detail['product_name']) ?>" width="100" height="100">
                                     </a>
-                                <?php else : ?>
+                                <?php else: ?>
                                     <img src="https://placehold.co/100x100" alt="No Image">
                                 <?php endif; ?>
                                 <strong><?= esc($detail['product_name']) ?></strong>
                             </p>
+
                         </td>
                         <td><?= esc(rp($detail['product_price'])) ?></td>
                         <td class="text-center"><?= esc($detail['quantity']) ?></td>

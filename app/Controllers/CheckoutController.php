@@ -54,7 +54,7 @@ class CheckoutController extends BaseController
             'user' => auth(),
             'action'        => base_url('/checkout/store'),
         ];
-        return view('pages/checkout/checkout', $data);
+        return view('pages/cart/checkout', $data);
     }
 
     public function store()
@@ -167,7 +167,7 @@ class CheckoutController extends BaseController
             'snapToken' => $snapToken
         ];
 
-        return view('pages/checkout/payment', $data);
+        return view('pages/cart/payment', $data);
     }
 
     public function paid(string $inv)

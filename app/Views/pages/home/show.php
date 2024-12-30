@@ -6,23 +6,29 @@
             <div class="col-lg-6 col-md-6">
                 <div class="product__details__pic">
                     <div class="product__details__pic__item">
-                        <?php if (!empty($product['image'])): ?>
-                            <img class="product__details__pic__item--large" src="<?= base_url('storage/products/' . esc($product['image'])) ?>" alt="">
+                        <?php
+                        $images = json_decode($product['image'], true); // Decode JSON menjadi array
+                        $firstImage = !empty($images) ? $images[0] : null; // Ambil gambar pertama
+                        ?>
+                        <?php if ($firstImage): ?>
+                            <img class="product__details__pic__item--large" src="<?= base_url('storage/products/' . esc($firstImage)) ?>" alt="">
                         <?php else: ?>
                             <img class="product__details__pic__item--large" src="https://placehold.co/300x200" alt="">
                         <?php endif; ?>
                     </div>
                     <div class="product__details__pic__slider owl-carousel">
-                        <img data-imgbigurl="<?= base_url('img/product/details/product-details-2.jpg') ?>"
-                            src="<?= base_url('img/product/details/product-details-2.jpg') ?>" alt="">
-                        <img data-imgbigurl="<?= base_url('img/product/details/product-details-3.jpg') ?>"
-                            src="<?= base_url('img/product/details/product-details-3.jpg') ?>" alt="">
-                        <img data-imgbigurl="<?= base_url('img/product/details/product-details-4.jpg') ?>"
-                            src="<?= base_url('img/product/details/product-details-4.jpg') ?>" alt="">
-                        <img data-imgbigurl="<?= base_url('img/product/details/product-details-5.jpg') ?>"
-                            src="<?= base_url('img/product/details/product-details-5.jpg') ?>" alt="">
+                        <?php if (!empty($images)): ?>
+                            <?php foreach ($images as $image): ?>
+                                <img data-imgbigurl="<?= base_url('storage/products/' . esc($image)) ?>"
+                                    src="<?= base_url('storage/products/' . esc($image)) ?>" alt="">
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <img data-imgbigurl="https://placehold.co/300x200"
+                                src="https://placehold.co/300x200" alt="No Image Available">
+                        <?php endif; ?>
                     </div>
                 </div>
+
             </div>
             <div class="col-lg-6 col-md-6">
                 <?= form_open(route_to('add_cart', $product['id']),  ['method' => 'POST', 'enctype' => 'multipart/form-data', 'class' => 'product__details__text']) ?>
