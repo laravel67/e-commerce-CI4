@@ -6,11 +6,11 @@
             icon: "success",
         });
     </script>
-<?php elseif (session()->getFlashdata('error')) : ?>
+<?php elseif (session()->getFlashdata('errors')) : ?>
     <script>
         swal({
             title: "Oops!",
-            text: "<?= session()->getFlashdata('error'); ?>",
+            text: "<?= session()->getFlashdata('errors'); ?>",
             icon: "error",
         });
     </script>
